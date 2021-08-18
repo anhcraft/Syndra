@@ -30,8 +30,8 @@ function handleSentCard(string $user, string $server, string $requestId, int $st
         $stmt->close();
         $conn->close();
         if($status == 1 || $status == 2) {
-            addBonusPoints($user, $server, $realAmount);
-            return addPoints($user, $server, $realAmount * (1 + $bonus * 0.01) / 1000);
+            addBonusPoints($user, $server, $realAmount * ($status == 2 ? 0.5 : 1));
+            return addPoints($user, $server, $realAmount * ($status == 2 ? 0.5 : 1) * (1 + $bonus * 0.01) / 1000);
         }
         return true;
     } else {
@@ -60,8 +60,8 @@ function addPoints(string $user, string $server, int $points): bool {
     $stmt->execute();
     if(!$stmt->fetch()) {
         $stmt->close();
-        $stmt = $conn->prepare("insert into playerpoints (playername, points) values (?, ?)");
-        $stmt->bind_param("s", $uuid, $points);
+        $stmt = $conn->prepare("insert into `playerpoints` (`playername`, `points`) values (?, ?)");
+        $stmt->bind_param("si", $uuid, $points);
         if($stmt->execute()) {
             $stmt->close();
             $conn->close();

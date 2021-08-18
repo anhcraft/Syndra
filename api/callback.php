@@ -66,8 +66,8 @@ if ($callback_sign == $obj["callback_sign"] && $status != 99) {
                     $stmt2->execute();
                     $stmt2->close();
                     require_once "card.php";
-                    addBonusPoints($user, $server, $amount);
-                    $points = $amount * (1 + $bonus * 0.01) / 1000;
+                    addBonusPoints($user, $server, $amount * ($status == 2 ? 0.5 : 1));
+                    $points = $amount * ($status == 2 ? 0.5 : 1) * (1 + $bonus * 0.01) / 1000;
                     addPoints($user, $server, $points);
                 } else {
                     $stmt2 = $conn->prepare("UPDATE `transations` SET `STATUS` = ? WHERE REQUEST = ? AND CODE = ? AND SERI = ?");
