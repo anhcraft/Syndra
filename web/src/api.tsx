@@ -230,11 +230,12 @@ export default {
         })
     },
 
-    changeEmail(email: string, callback: any) {
+    changeEmail(email: string, captcha: string, callback: any) {
         const params = new URLSearchParams();
         params.append("endpoint", "change-email");
         params.append("token", this.getToken() as string);
         params.append("email", email);
+        params.append("captcha", captcha);
         axios.post(API_SERVER, params, {
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).then((res) => {

@@ -507,12 +507,12 @@ if($endpoint == "recover-password") {
             echo json_encode(array("code" => 6));
             return;
         }
-        $verificationCode = md5(rand(0, 99999)) . md5($email . $user);
+        $verifyCode = md5(rand(0, 99999)) . md5($email . $user);
         $stmt = $conn->prepare("UPDATE `wp_users` SET `recovery_code` = ? WHERE `user_login` = ?");
-        $stmt->bind_param("ss", $verificationCode, $user);
+        $stmt->bind_param("ss", $verifyCode, $user);
         if($stmt->execute()){
             $stmt->close();
-            $link = "https://taikhoan.minehot.com/recover.php?code=$verificationCode";
+            $link = "https://taikhoan.minehot.com/recover.php?code=$verifyCode";
             $mail = new PHPMailer(true);
             $body =
 <<<EOD
@@ -576,15 +576,70 @@ if($endpoint == "change-email") {
         return;
     }
 
-    $conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
-    if ($conn->connect_error) {
+    $captcha = getParam("captcha");
+    if(strlen($captcha) == 0) {
         echo json_encode(array("code" => 2));
         return;
     }
+    $recaptcha = new ReCaptcha($CAPTCHA_SECRET);
+    $resp = $recaptcha->verify($captcha);
+    if (!$resp->isSuccess()) {
+        echo json_encode(array("code" => 3));
+        return;
+    }
 
-    $stmt = $conn->prepare("UPDATE `wp_users` SET `user_email` = ? WHERE `user_login` = ?");
-    $stmt->bind_param("ss", $email, $user);
-    echo json_encode(array("code" => $stmt->execute() ? 0 : 2));
-    $stmt->close();
+    $conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
+    if ($conn->connect_error) {
+        echo json_encode(array("code" => 4));
+        return;
+    }
+
+    $verifyCode = md5(rand(0, 99999)) . md5($email . $user);
+    $stmt = $conn->prepare("UPDATE `wp_users` SET `verify_code` = ?, `pending_email` = ? WHERE `user_login` = ?");
+    $stmt->bind_param("sss", $verifyCode, $email, $user);
+    if($stmt->execute()){
+        $stmt->close();
+        $link = "https://taikhoan.minehot.com/change-email.php?code=$verifyCode";
+        $mail = new PHPMailer(true);
+        $body =
+            <<<EOD
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap" rel="stylesheet"> 
+<div style="font-family: 'Work Sans', sans-serif;">
+  <p>Xin chào <b>$user</b>,</p>
+  <p>Gần đây, bạn đã gửi một yêu cầu đổi email.</p>
+  <p>Để tiến hành xác nhận email mới cho tài khoản, bạn vui lòng truy cập đường dẫn sau đây:</p>
+  <a href="$link" style="border: #c73d28 2px solid; padding: 5px"><b>$link</b></a>
+  <p>Nếu bạn cho rằng bức thư này là một sự nhầm lẫn thì rất có thể ai đó đang cố gắng truy cập vào tài khoản của bạn tại Minehot. Bạn có thể bỏ qua bức thư này nếu muốn.</p>
+  <p>Chúc bạn chơi game vui vẻ tại server Minehot.</p>
+  <p>IP server: minehot.com</p>
+</div>
+EOD;
+        try {
+            //$mail->SMTPDebug = SMTP::DEBUG_SERVER;
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.gmail.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $SMTP_USER;
+            $mail->Password   = $SMTP_PASS;
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port       = 465;
+            $mail->CharSet   = "utf-8";
+            $mail->setFrom($SMTP_USER, $SMTP_NAME);
+            $mail->addAddress($email, $user);
+            $mail->addReplyTo($SMTP_USER, $SMTP_NAME);
+            $mail->isHTML(true);
+            $mail->Subject = 'Xác nhận yêu cầu đổi email';
+            $mail->Body    = $body;
+            $mail->send();
+            echo json_encode(array("code" => 0, "email" => $email));
+        } catch (Exception $e) {
+            echo json_encode(array("code" => 4));
+        }
+    } else {
+        $stmt->close();
+        echo json_encode(array("code" => 4));
+    }
     $conn->close();
 }

@@ -21,6 +21,8 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import clsx from 'clsx';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import EmailIcon from '@material-ui/icons/Email';
+import ChangeEmail from "../pages/ChangeEmail";
 
 const darkTheme = createTheme({
     palette: {
@@ -186,6 +188,12 @@ class Sidebar extends React.Component<ComponentProps<any>, IState> {
                             </ListItemIcon>
                             <ListItemText primary={this.state.info.user} />
                         </ListItem>
+                        <ListItem button onClick={this.changeEmail}>
+                            <ListItemIcon>
+                                <EmailIcon/>
+                            </ListItemIcon>
+                            <ListItemText primary="Đổi email" />
+                        </ListItem>
                     </List>
                     <Divider />
                     <List>
@@ -225,6 +233,13 @@ class Sidebar extends React.Component<ComponentProps<any>, IState> {
     logout(e: any) {
         api.setToken(null);
         window.location.reload(true);
+    }
+
+    changeEmail(e: any) {
+        ReactDOM.render(
+            <ChangeEmail/>,
+            document.getElementById('root')
+        )
     }
 }
 
