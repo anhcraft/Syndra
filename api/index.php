@@ -380,16 +380,17 @@ if($endpoint == "get-info") {
         echo json_encode(array("code" => 4));
         return;
     }
-    $stmt = $conn->prepare("select user_registered, display_name, last_ip, last_login from wp_users where user_login=?");
+    $stmt = $conn->prepare("select user_registered, display_name, last_ip, last_login, user_email from wp_users where user_login=?");
     $stmt->bind_param("s", $user);
     $stmt->execute();
-    $stmt->bind_result($registerDate, $displayName, $lastIp, $lastLogin);
+    $stmt->bind_result($registerDate, $displayName, $lastIp, $lastLogin, $email);
     if ($stmt->fetch()) {
         $res = array(
             "registerDate" => $registerDate,
             "displayName" => $displayName,
             "lastIp" => $lastIp,
-            "lastLogin" => $lastLogin
+            "lastLogin" => $lastLogin,
+            "email" => $email
         );
     }
     $stmt->close();

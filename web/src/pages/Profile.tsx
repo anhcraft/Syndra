@@ -76,7 +76,8 @@ class Profile extends React.Component<ComponentProps<any>, IState> {
                 registerDate: "",
                 displayName: "",
                 lastIp: "",
-                lastLogin: 0
+                lastLogin: 0,
+                email: ""
             },
             code: -1,
             emailCode: -1,
@@ -135,7 +136,7 @@ class Profile extends React.Component<ComponentProps<any>, IState> {
                                                 <TableBody>
                                                     <TableRow>
                                                         <TableCell component="th" scope="row">Email</TableCell>
-                                                        <TableCell align="right">{this.state.accountInfo.email == null || this.state.accountInfo.email == "" ? "[Chưa có email]" : this.state.accountInfo.email}</TableCell>
+                                                        <TableCell align="right">{this.state.userInfo.email == null || this.state.userInfo.email == "" ? "[Chưa có email]" : this.state.userInfo.email}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell component="th" scope="row">Tên hiển thị</TableCell>
