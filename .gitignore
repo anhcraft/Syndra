@@ -1,0 +1,8 @@
+/api/vendor/
+/api/api.iml
+/api/composer.lock
+/api/composer.phar
+/web/package-lock.json
+/web/web.iml
+/Syndra.iml
+/.idea/
