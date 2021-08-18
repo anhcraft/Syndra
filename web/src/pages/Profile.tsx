@@ -59,6 +59,7 @@ interface IState {
     accountInfo: AccountInfo;
     userInfo: UserInfo;
     code: number;
+    emailCode: number;
     collections: Map<string, CoinCollection>;
     rank: Map<string, number>;
 }
@@ -78,6 +79,7 @@ class Profile extends React.Component<ComponentProps<any>, IState> {
                 lastLogin: 0
             },
             code: -1,
+            emailCode: -1,
             collections: new Map<string, CoinCollection>(),
             rank: new Map<string, number>()
         };
@@ -154,6 +156,38 @@ class Profile extends React.Component<ComponentProps<any>, IState> {
                                                 </TableBody>
                                             </Table>
                                         </TableContainer>
+                                        <br/><Divider/><br/>
+                                        <Typography component="h5" variant="h5">Đổi email</Typography>
+                                        <form className={classes.form} onSubmit={this.changeEmail.bind(this)} noValidate>
+                                            <TextField
+                                                variant="outlined"
+                                                margin="normal"
+                                                required
+                                                fullWidth
+                                                name="email"
+                                                label="Email mới"
+                                                type="email"
+                                                id="email"
+                                                error={this.state.emailCode > 0}
+                                            />
+                                            <Typography>
+                                                {this.state.emailCode == 0 && "Đổi email thành công!"}
+                                                {this.state.emailCode == 1 && "Email không hợp lệ!"}
+                                                {this.state.emailCode == 2 && "Lỗi xử lý từ máy chủ. Vui lòng báo lại admin!"}
+                                            </Typography>
+                                            <Button
+                                                type="submit"
+                                                fullWidth
+                                                variant="contained"
+                                                color="primary"
+                                                className={classes.submit}
+                                            >
+                                                Đổi email
+                                            </Button>
+                                            <ul>
+                                                <li>Đặt đúng email để có thể lấy lại tài khoản nếu quên mật khẩu</li>
+                                            </ul>
+                                        </form>
                                         <br/><Divider/><br/>
                                         <Typography component="h5" variant="h5">Đổi mật khẩu</Typography>
                                         <form className={classes.form} onSubmit={this.changePassword.bind(this)} noValidate>
@@ -283,10 +317,40 @@ class Profile extends React.Component<ComponentProps<any>, IState> {
                 this.setState({code: 0});
                 setTimeout(function () {
                     window.location.reload(true);
-                }, 4000);
+                }, 2000);
             } else {
                 this.setState({
                     code: res["code"] as number
+                });
+            }
+        });
+    }
+
+    changeEmail(event: React.FormEvent) {
+        event.preventDefault()
+        const form = event.target as HTMLFormElement;
+        const email = (form.elements.namedItem("email") as HTMLInputElement).value.trim();
+        if(email.length == 0) {
+            this.setState({emailCode: 1})
+            return
+        }
+        if(!(/^\S+@\S+$/.test(email))) {
+            this.setState({emailCode: 1})
+            return
+        }
+        api.changeEmail(email, (res: any) => {
+            if(res == null) {
+                this.setState({emailCode: 2});
+                return;
+            }
+            if(res["code"] as number == 0) {
+                this.setState({emailCode: 0});
+                setTimeout(function () {
+                    window.location.reload(true);
+                }, 2000);
+            } else {
+                this.setState({
+                    emailCode: res["code"] as number
                 });
             }
         });

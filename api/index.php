@@ -559,3 +559,31 @@ EOD;
     }
     $conn->close();
 }
+
+if($endpoint == "change-email") {
+    $token = getParam("token");
+    if(strlen($token) == 0) {
+        echo json_encode(array("code" => 1));
+        return;
+    }
+    $payload = (array) JWT::decode($token, $JWT_PUBLIC_KEY, array('RS256'));
+    $user = $payload["user_id"];
+
+    $email = getParam("email");
+    if(strlen($email) == 0 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo json_encode(array("code" => 1));
+        return;
+    }
+
+    $conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
+    if ($conn->connect_error) {
+        echo json_encode(array("code" => 2));
+        return;
+    }
+
+    $stmt = $conn->prepare("UPDATE `wp_users` SET `user_email` = ? WHERE `user_login` = ?");
+    $stmt->bind_param("ss", $email, $user);
+    echo json_encode(array("code" => $stmt->execute() ? 0 : 2));
+    $stmt->close();
+    $conn->close();
+}

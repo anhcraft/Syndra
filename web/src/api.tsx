@@ -228,5 +228,19 @@ export default {
         }).catch((err) => {
             callback.call(null, null);
         })
+    },
+
+    changeEmail(email: string, callback: any) {
+        const params = new URLSearchParams();
+        params.append("endpoint", "change-email");
+        params.append("token", this.getToken() as string);
+        params.append("email", email);
+        axios.post(API_SERVER, params, {
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).then((res) => {
+            callback.call(null, res.data);
+        }).catch((err) => {
+            callback.call(null, null);
+        })
     }
 };
