@@ -1,0 +1,2 @@
+# Syndra
+MineHot Member Portal
