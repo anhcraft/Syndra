@@ -19,6 +19,12 @@ use PHPMailer\PHPMailer\Exception;
 
 $hasher = new PasswordHash(8, true);
 
+function hideStr(string $in): string {
+    $sub = intval(strlen($in) * 0.5);
+    $trail = substr($in, $sub);
+    return str_repeat('*', strlen($in) - strlen($trail)) . $trail;
+}
+
 function getParam($key): ?string {
     if(array_key_exists($key, $_POST)) {
         return trim($_POST[$key]);
@@ -342,12 +348,6 @@ if($endpoint == "send-card") {
     }
 }
 
-function hideStr(string $in): string {
-    $sub = intval(strlen($in) * 0.5);
-    $trail = substr($in, $sub);
-    return str_repeat('*', strlen($in) - strlen($trail)) . $trail;
-}
-
 if($endpoint == "get-transactions") {
     $res = [];
     $conn = new mysqli($dbHost, $cardDbUser, $cardDbPass, $cardDbName);
@@ -402,7 +402,7 @@ if($endpoint == "get-info") {
             "displayName" => $displayName,
             "lastIp" => $lastIp,
             "lastLogin" => $lastLogin,
-            "email" => $email
+            "email" => hideStr($email)
         );
     }
     $stmt->close();
@@ -558,7 +558,7 @@ EOD;
                 $mail->Subject = 'Xác nhận yêu cầu khôi phục tài khoản';
                 $mail->Body    = $body;
                 $mail->send();
-                echo json_encode(array("code" => 0, "email" => $email));
+                echo json_encode(array("code" => 0, "email" => hideStr($email)));
             } catch (Exception $e) {
                 echo json_encode(array("code" => 5));
             }
