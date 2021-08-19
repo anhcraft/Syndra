@@ -1,11 +1,9 @@
 import React, {ComponentProps} from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import {Theme} from '@material-ui/core/styles';
 import {
-    createStyles, createTheme, Divider,
-    Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+    createStyles, createTheme, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     withStyles,
     withTheme
 } from "@material-ui/core";
@@ -17,7 +15,6 @@ import {UserInfo} from "../UserInfo";
 import moment from "moment";
 import {CoinCollection} from "../CoinCollection";
 import Typography from "@material-ui/core/Typography";
-import { Button } from '@material-ui/core';
 
 const lightTheme = createTheme({
     palette: {

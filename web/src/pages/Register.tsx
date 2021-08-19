@@ -14,7 +14,6 @@ import background from "../resources/background.jpg"
 import api from "../api";
 import ReactDOM from "react-dom";
 import Login from "./Login";
-import Recovery from "./Recovery";
 import ReCAPTCHA from "react-google-recaptcha";
 
 const useStyles = createStyles((theme: Theme) => ({

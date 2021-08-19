@@ -1,6 +1,5 @@
 import React, {ComponentProps} from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Grid from '@material-ui/core/Grid';
 import {Theme} from '@material-ui/core/styles';
 import {
     AppBar, Box,

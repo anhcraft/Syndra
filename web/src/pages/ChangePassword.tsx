@@ -3,24 +3,15 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import {Theme} from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
 import {
-    createStyles, createTheme, Divider,
-    Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-    withStyles,
+    createStyles, createTheme, Paper, withStyles,
     withTheme
 } from "@material-ui/core";
 import api from "../api";
-import {AccountInfo} from "../AccountInfo";
 import { ThemeProvider } from '@material-ui/core';
 import Sidebar from "../components/Sidebar";
-import {UserInfo} from "../UserInfo";
-import {Transaction} from "../Transaction";
-import moment from "moment";
-import {CoinCollection} from "../CoinCollection";
 import Typography from "@material-ui/core/Typography";
 import { Button } from '@material-ui/core';
-import ReCAPTCHA from "react-google-recaptcha";
 
 const lightTheme = createTheme({
     palette: {
