@@ -152,6 +152,7 @@ class SignUp extends React.Component<ComponentProps<any>, IState> {
                                     {this.state.code == 5 && "Lỗi xử lý từ máy chủ. Vui lòng báo lại admin!"}
                                     {this.state.code == 6 && "Vui lòng xác minh captcha!"}
                                     {this.state.code == 7 && "Xác minh captcha thất bại!"}
+                                    {this.state.code == 8 && "Email đã có người sử dụng!"}
                                 </Typography>
                                 <Button
                                     type="submit"

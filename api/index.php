@@ -168,6 +168,18 @@ if($endpoint == "signup") {
     }
     $stmt->close();
 
+    // check email duplication
+    $stmt = $conn->prepare("SELECT realname FROM `wp_users` WHERE `user_email` = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    if($stmt->fetch()){
+        echo json_encode(array("code" => 8));
+        $stmt->close();
+        $conn->close();
+        return;
+    }
+    $stmt->close();
+
     $stmt = $conn->prepare("insert into wp_users (user_login, realname, user_pass, user_nicename, user_email, display_name, email, regdate)
 values (?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("sssssssi", $user, $user, $hasher->HashPassword($pass), strtolower($user), $email, $user, $email, $milliseconds);
