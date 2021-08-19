@@ -6,6 +6,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import {Theme} from '@material-ui/core/styles';
 import {
+    Chip,
     createStyles,
     createTheme,
     FormControl,
@@ -29,8 +30,9 @@ import { Select } from '@material-ui/core';
 import {green, red} from "@material-ui/core/colors";
 import Sidebar from "../components/Sidebar";
 import {CardStatus} from "../CardStatus";
-import ReactDOM from "react-dom";
 import {Transaction} from "../Transaction";
+import AutorenewIcon from '@material-ui/icons/Autorenew';
+import WarningIcon from '@material-ui/icons/Warning';
 
 const lightTheme = createTheme({
     palette: {
@@ -254,11 +256,11 @@ class Donate extends React.Component<ComponentProps<any>, IState> {
                                                                 {t.type}
                                                             </TableCell>
                                                             <TableCell align="right">
-                                                                {t.status == 1 && "Thẻ đúng"}
-                                                                {t.status == 2 && "Sai mệnh giá"}
-                                                                {t.status == 3 && "Thẻ sai"}
-                                                                {t.status == 99 && "Đang xử lí"}
-                                                                {t.status == 100 && "Không hợp lệ"}
+                                                                {t.status == 1 && <Chip color="primary" icon={<CheckCircleIcon />} label="Thẻ đúng" />}
+                                                                {t.status == 2 && <Chip color="primary" icon={<WarningIcon />} label="Sai mệnh giá" />}
+                                                                {t.status == 3 && <Chip color="secondary" icon={<CancelIcon />} label="Thẻ sai" />}
+                                                                {t.status == 99 && <Chip icon={<AutorenewIcon />} label="Đang xử lý" />}
+                                                                {t.status == 100 && <Chip color="secondary" icon={<CancelIcon />} label="Không hợp lệ" />}
                                                             </TableCell>
                                                             <TableCell align="right">
                                                                 {t.date}
