@@ -424,7 +424,7 @@ if($endpoint == "get-donation-top") {
     $stmt->execute();
     $stmt->bind_result($user, $sum);
     while ($stmt->fetch()) {
-        $res[$user] = $sum;
+        $res[hideStr($user)] = $sum;
     }
     $stmt->close();
     $conn->close();
