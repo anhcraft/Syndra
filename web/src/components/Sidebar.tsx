@@ -25,6 +25,7 @@ import EmailIcon from '@material-ui/icons/Email';
 import LockIcon from '@material-ui/icons/Lock';
 import ChangeEmail from "../pages/ChangeEmail";
 import ChangePassword from "../pages/ChangePassword";
+import DonationStats from "../pages/DonationStats";
 
 const darkTheme = createTheme({
     palette: {
@@ -107,7 +108,8 @@ class Sidebar extends React.Component<ComponentProps<any>, IState> {
         this.state = {
             info: {
                 user: "",
-                email: ""
+                email: "",
+                admin: false
             },
             open: true
         };
@@ -115,6 +117,7 @@ class Sidebar extends React.Component<ComponentProps<any>, IState> {
 
     componentDidMount() {
         api.getInfo((res: AccountInfo) => {
+            console.log(res)
             this.setState({
                 info: res
             })
@@ -212,6 +215,19 @@ class Sidebar extends React.Component<ComponentProps<any>, IState> {
                             <ListItemText primary="Nạp thẻ" />
                         </ListItem>
                     </List>
+                    {this.state.info.admin &&
+                        (<div>
+                            <Divider />
+                            <List>
+                                <ListItem button onClick={this.donationStats}>
+                                    <ListItemIcon>
+                                        <PaymentIcon/>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Thống kê nạp thẻ" />
+                                </ListItem>
+                            </List>
+                        </div>)
+                    }
                     <Divider />
                     <ListItem button onClick={this.logout}>
                         <ListItemIcon>
@@ -253,6 +269,13 @@ class Sidebar extends React.Component<ComponentProps<any>, IState> {
     changePassword(e: any) {
         ReactDOM.render(
             <ChangePassword/>,
+            document.getElementById('root')
+        )
+    }
+
+    donationStats(e: any) {
+        ReactDOM.render(
+            <DonationStats/>,
             document.getElementById('root')
         )
     }

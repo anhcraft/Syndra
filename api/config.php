@@ -59,6 +59,10 @@ $SMTP_NAME = "";
 $SMTP_USER = "";
 $SMTP_PASS = "";
 
+function isAdmin($u): bool {
+    return $u == "hotvit" || $u == "admin";
+}
+
 function offlinePlayerUuid($username): string{
     $data = hex2bin(md5("OfflinePlayer:" . $username));
     //set the version to 3 -> Name based md5 hash

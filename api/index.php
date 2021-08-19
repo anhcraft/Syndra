@@ -226,7 +226,8 @@ if($endpoint == "login") {
                 "iat" => time(),
                 "exp" => time() + $JWT_DURABILITY,
                 "user_id" => $user,
-                "user_email" => ($userEmail == null ? "" : $userEmail)
+                "user_email" => ($userEmail == null ? "" : $userEmail),
+                "admin" => isAdmin($user) ? "true" : "false"
             );
             $jwt = JWT::encode($payload, $JWT_PRIVATE_KEY, 'RS256');
             echo json_encode(array(
@@ -654,4 +655,53 @@ EOD;
         echo json_encode(array("code" => 4));
     }
     $conn->close();
+}
+
+if($endpoint == "get-donation-stats") {
+    $token = getParam("token");
+    if(strlen($token) == 0) {
+        echo json_encode(array("code" => 1));
+        return;
+    }
+    $payload = (array) JWT::decode($token, $JWT_PUBLIC_KEY, array('RS256'));
+    $user = $payload["user_id"];
+    if(!array_key_exists($user, $ADMINS)) {
+        echo json_encode(array("code" => 1));
+        return;
+    }
+
+    $conn = new mysqli($dbHost, $cardDbUser, $cardDbPass, $cardDbName);
+    if ($conn->connect_error) {
+        echo json_encode(array("code" => 1));
+        return;
+    }
+    $res = array();
+    {
+        $sub = array();
+        $stmt = $conn->prepare("SELECT `USER`, SUM(`REALVALUE`) FROM `transations` WHERE year(`DATE`) = year(NOW()) and month(`DATE`) = month(NOW()) GROUP BY `USER` ORDER BY SUM(`REALVALUE`) DESC LIMIT 10");
+        $stmt->execute();
+        $stmt->bind_result($user, $sum);
+        while ($stmt->fetch()) {
+            $sub[$user] = $sum;
+        }
+        $stmt->close();
+        $res["Network"] = $sub;
+    }
+    foreach ($servers as $id => $sv) {
+        $sub = array();
+        $stmt = $conn->prepare("SELECT `USER`, SUM(`REALVALUE`) FROM `transations` WHERE year(`DATE`) = year(NOW()) and month(`DATE`) = month(NOW()) and `SERVER` = ? GROUP BY `USER` ORDER BY SUM(`REALVALUE`) DESC LIMIT 10");
+        $stmt->bind_param("s", $id);
+        $stmt->execute();
+        $stmt->bind_result($user, $sum);
+        while ($stmt->fetch()) {
+            $sub[$user] = $sum;
+        }
+        $stmt->close();
+        $res[$sv["name"]] = $sub;
+    }
+    $conn->close();
+    echo json_encode(array(
+        "code" => 0,
+        "result" => $res
+    ));
 }

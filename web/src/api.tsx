@@ -44,7 +44,8 @@ export default {
             if(err == null){
                 callback.call(null, {
                     user: decoded["user_id"],
-                    email: decoded["user_email"]
+                    email: decoded["user_email"],
+                    admin: decoded["admin"] == "true"
                 });
             } else {
                 callback.call(null, null);
@@ -240,6 +241,23 @@ export default {
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).then((res) => {
             callback.call(null, res.data);
+        }).catch((err) => {
+            callback.call(null, null);
+        })
+    },
+
+    getDonationStats(callback: any) {
+        const params = new URLSearchParams();
+        params.append("endpoint", "get-donation-stats");
+        params.append("token", this.getToken() as string);
+        axios.post(API_SERVER, params, {
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).then((res) => {
+            if(res.data.code == 0) {
+                callback.call(null, res.data.result);
+            } else {
+                callback.call(null, null);
+            }
         }).catch((err) => {
             callback.call(null, null);
         })

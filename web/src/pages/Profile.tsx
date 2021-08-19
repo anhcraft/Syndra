@@ -66,7 +66,8 @@ class Profile extends React.Component<ComponentProps<any>, IState> {
         this.state = {
             accountInfo: {
                 user: "",
-                email: ""
+                email: "",
+                admin: false
             },
             userInfo: {
                 registerDate: "",
