@@ -56,7 +56,6 @@ const useStyles = createStyles((theme: Theme) => ({
 interface IState {
     accountInfo: AccountInfo;
     userInfo: UserInfo;
-    code: number;
     collections: Map<string, CoinCollection>;
     rank: Map<string, number>;
 }
@@ -76,7 +75,6 @@ class Profile extends React.Component<ComponentProps<any>, IState> {
                 lastLogin: 0,
                 email: ""
             },
-            code: -1,
             collections: new Map<string, CoinCollection>(),
             rank: new Map<string, number>()
         };
@@ -153,52 +151,6 @@ class Profile extends React.Component<ComponentProps<any>, IState> {
                                                 </TableBody>
                                             </Table>
                                         </TableContainer>
-                                        <br/><Divider/><br/>
-                                        <Typography component="h5" variant="h5">Đổi mật khẩu</Typography>
-                                        <form className={classes.form} onSubmit={this.changePassword.bind(this)} noValidate>
-                                            <TextField
-                                                variant="outlined"
-                                                margin="normal"
-                                                required
-                                                fullWidth
-                                                name="pass1"
-                                                label="Mật khẩu hiện tại"
-                                                type="password"
-                                                id="pass1"
-                                                error={this.state.code > 0}
-                                            />
-                                            <TextField
-                                                variant="outlined"
-                                                margin="normal"
-                                                required
-                                                fullWidth
-                                                name="pass2"
-                                                label="Mật khẩu mới (8-30 kí tự)"
-                                                type="password"
-                                                id="pass2"
-                                                error={this.state.code > 0 && this.state.code != 2}
-                                            />
-                                            <Typography>
-                                                {this.state.code == 0 && "Đổi mật khẩu thành công!"}
-                                                {this.state.code == 1 && "Vui lòng nhập đủ thông tin!"}
-                                                {this.state.code == 2 && "Sai mật khẩu hiện tại!"}
-                                                {this.state.code == 3 && "Mật khẩu mới phải từ 8 - 30 kí tự!"}
-                                                {this.state.code == 4 && "Lỗi xử lý từ máy chủ. Vui lòng báo lại admin!"}
-                                            </Typography>
-                                            <Button
-                                                type="submit"
-                                                fullWidth
-                                                variant="contained"
-                                                color="primary"
-                                                className={classes.submit}
-                                            >
-                                                Đổi mật khẩu
-                                            </Button>
-                                            <ul>
-                                                <li>Không đặt các mật khẩu dễ như “123456” tránh bị mất tài khoản</li>
-                                                <li>Nên đặt mật khẩu bao gồm chữ cái, số và ký tự đặc biệt</li>
-                                            </ul>
-                                        </form>
                                     </Paper>
                                 </Grid>
                                 <Grid item>
@@ -262,33 +214,6 @@ class Profile extends React.Component<ComponentProps<any>, IState> {
                 </div>
             </ThemeProvider>
         );
-    }
-
-    changePassword(event: React.FormEvent) {
-        event.preventDefault()
-        const form = event.target as HTMLFormElement;
-        const pass1 = (form.elements.namedItem("pass1") as HTMLInputElement).value.trim();
-        const pass2 = (form.elements.namedItem("pass2") as HTMLInputElement).value.trim();
-        if(pass1.length == 0 || pass2.length == 0) {
-            this.setState({code: 1})
-            return
-        }
-        api.changePassword(pass1, pass2, (res: any) => {
-            if(res == null) {
-                this.setState({code: 4});
-                return;
-            }
-            if(res["code"] as number == 0) {
-                this.setState({code: 0});
-                setTimeout(function () {
-                    window.location.reload(true);
-                }, 2000);
-            } else {
-                this.setState({
-                    code: res["code"] as number
-                });
-            }
-        });
     }
 }
 

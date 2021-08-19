@@ -57,16 +57,14 @@ const useStyles = createStyles((theme: Theme) => ({
 }));
 
 interface IState {
-    captcha: string;
-    emailCode: number;
+    code: number;
 }
 
-class ChangeEmail extends React.Component<ComponentProps<any>, IState> {
+class ChangePassword extends React.Component<ComponentProps<any>, IState> {
     constructor(props: any) {
         super(props);
         this.state = {
-            emailCode: -1,
-            captcha: ""
+            code: -1,
         };
     }
 
@@ -82,32 +80,36 @@ class ChangeEmail extends React.Component<ComponentProps<any>, IState> {
                             <ThemeProvider theme={lightTheme}>
                                 <Grid item>
                                     <Paper className={classes.paper}>
-                                        <Typography component="h5" variant="h5">Đổi email</Typography>
-                                        <form className={classes.form} onSubmit={this.changeEmail.bind(this)} noValidate>
+                                        <Typography component="h5" variant="h5">Đổi mật khẩu</Typography>
+                                        <form className={classes.form} onSubmit={this.changePassword.bind(this)} noValidate>
                                             <TextField
                                                 variant="outlined"
                                                 margin="normal"
                                                 required
                                                 fullWidth
-                                                name="email"
-                                                label="Email mới"
-                                                type="email"
-                                                id="email"
-                                                error={this.state.emailCode > 0}
+                                                name="pass1"
+                                                label="Mật khẩu hiện tại"
+                                                type="password"
+                                                id="pass1"
+                                                error={this.state.code > 0}
                                             />
-                                            <p>Bạn vui lòng xác nhận yêu cầu đổi email:</p>
-                                            <ReCAPTCHA
-                                                sitekey="6LcSvAscAAAAAP9KKw1zKFWt12devap5KnuRGJeD"
-                                                hl="vi"
-                                                onChange={this.verifyCaptcha.bind(this)}
+                                            <TextField
+                                                variant="outlined"
+                                                margin="normal"
+                                                required
+                                                fullWidth
+                                                name="pass2"
+                                                label="Mật khẩu mới (8-30 kí tự)"
+                                                type="password"
+                                                id="pass2"
+                                                error={this.state.code > 0 && this.state.code != 2}
                                             />
-                                            <p>Một bức thư sẽ được gửi tới email mới của bạn. Hãy làm theo hưỡng dẫn trong mail đó để xác nhận!</p>
                                             <Typography>
-                                                {this.state.emailCode == 0 && "Một bức thư đã được gửi tới email mới! Hãy vào hòm thư kiểm tra."}
-                                                {this.state.emailCode == 1 && "Email không hợp lệ!"}
-                                                {this.state.emailCode == 2 && "Vui lòng xác minh captcha!"}
-                                                {this.state.emailCode == 3 && "Xác minh captcha thất bại!"}
-                                                {this.state.emailCode == 4 && "Lỗi xử lý từ máy chủ. Vui lòng báo lại admin!"}
+                                                {this.state.code == 0 && "Đổi mật khẩu thành công!"}
+                                                {this.state.code == 1 && "Vui lòng nhập đủ thông tin!"}
+                                                {this.state.code == 2 && "Sai mật khẩu hiện tại!"}
+                                                {this.state.code == 3 && "Mật khẩu mới phải từ 8 - 30 kí tự!"}
+                                                {this.state.code == 4 && "Lỗi xử lý từ máy chủ. Vui lòng báo lại admin!"}
                                             </Typography>
                                             <Button
                                                 type="submit"
@@ -116,10 +118,11 @@ class ChangeEmail extends React.Component<ComponentProps<any>, IState> {
                                                 color="primary"
                                                 className={classes.submit}
                                             >
-                                                Đổi email
+                                                Đổi mật khẩu
                                             </Button>
                                             <ul>
-                                                <li>Đặt đúng email để có thể lấy lại tài khoản nếu quên mật khẩu</li>
+                                                <li>Không đặt các mật khẩu dễ như “123456” tránh bị mất tài khoản</li>
+                                                <li>Nên đặt mật khẩu bao gồm chữ cái, số và ký tự đặc biệt</li>
                                             </ul>
                                         </form>
                                     </Paper>
@@ -132,43 +135,32 @@ class ChangeEmail extends React.Component<ComponentProps<any>, IState> {
         );
     }
 
-    verifyCaptcha(tkn: string | null){
-        this.setState({captcha: tkn == null ? "" : tkn})
-    }
-
-    changeEmail(event: React.FormEvent) {
+    changePassword(event: React.FormEvent) {
         event.preventDefault()
         const form = event.target as HTMLFormElement;
-        const email = (form.elements.namedItem("email") as HTMLInputElement).value.trim();
-        if(email.length == 0) {
-            this.setState({emailCode: 1})
+        const pass1 = (form.elements.namedItem("pass1") as HTMLInputElement).value.trim();
+        const pass2 = (form.elements.namedItem("pass2") as HTMLInputElement).value.trim();
+        if(pass1.length == 0 || pass2.length == 0) {
+            this.setState({code: 1})
             return
         }
-        if(!(/^\S+@\S+$/.test(email))) {
-            this.setState({emailCode: 1})
-            return
-        }
-        if(this.state.captcha.length == 0) {
-            this.setState({emailCode: 2});
-            return;
-        }
-        api.changeEmail(email, this.state.captcha, (res: any) => {
+        api.changePassword(pass1, pass2, (res: any) => {
             if(res == null) {
-                this.setState({emailCode: 4});
+                this.setState({code: 4});
                 return;
             }
             if(res["code"] as number == 0) {
-                this.setState({emailCode: 0});
+                this.setState({code: 0});
                 setTimeout(function () {
                     window.location.reload(true);
                 }, 2000);
             } else {
                 this.setState({
-                    emailCode: res["code"] as number
+                    code: res["code"] as number
                 });
             }
         });
     }
 }
 
-export default withTheme(withStyles(useStyles)(ChangeEmail));
+export default withTheme(withStyles(useStyles)(ChangePassword));

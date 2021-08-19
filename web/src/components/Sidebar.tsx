@@ -22,7 +22,9 @@ import clsx from 'clsx';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import EmailIcon from '@material-ui/icons/Email';
+import LockIcon from '@material-ui/icons/Lock';
 import ChangeEmail from "../pages/ChangeEmail";
+import ChangePassword from "../pages/ChangePassword";
 
 const darkTheme = createTheme({
     palette: {
@@ -194,6 +196,12 @@ class Sidebar extends React.Component<ComponentProps<any>, IState> {
                             </ListItemIcon>
                             <ListItemText primary="Đổi email" />
                         </ListItem>
+                        <ListItem button onClick={this.changePassword}>
+                            <ListItemIcon>
+                                <LockIcon/>
+                            </ListItemIcon>
+                            <ListItemText primary="Đổi mật khẩu" />
+                        </ListItem>
                     </List>
                     <Divider />
                     <List>
@@ -238,6 +246,13 @@ class Sidebar extends React.Component<ComponentProps<any>, IState> {
     changeEmail(e: any) {
         ReactDOM.render(
             <ChangeEmail/>,
+            document.getElementById('root')
+        )
+    }
+
+    changePassword(e: any) {
+        ReactDOM.render(
+            <ChangePassword/>,
             document.getElementById('root')
         )
     }
