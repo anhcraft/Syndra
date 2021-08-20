@@ -30,7 +30,7 @@ function getBonusRate(string $provider): float {
     if ($conn->connect_error) {
         return 0;
     }
-    $stmt = $conn->prepare("select bonus from donate_provider where name=?");
+    $stmt = $conn->prepare("select bonus from donate_provider where `name` = ?");
     $stmt->bind_param("s", $provider);
     $stmt->execute();
     $stmt->bind_result($bonus);

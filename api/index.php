@@ -105,7 +105,7 @@ if($endpoint == "get-collections") {
         echo json_encode(array("code" => 2));
         return;
     }
-    $stmt = $conn->prepare("select server, collected from donate_collection where user=?");
+    $stmt = $conn->prepare("select server, collected from donate_collection where `user`=?");
     $stmt->bind_param("s", $user);
     $stmt->execute();
     $stmt->bind_result($server, $collected);
@@ -665,7 +665,7 @@ if($endpoint == "get-donation-stats") {
     }
     $payload = (array) JWT::decode($token, $JWT_PUBLIC_KEY, array('RS256'));
     $user = $payload["user_id"];
-    if(!array_key_exists($user, $ADMINS)) {
+    if(!isAdmin($user)) {
         echo json_encode(array("code" => 1));
         return;
     }
