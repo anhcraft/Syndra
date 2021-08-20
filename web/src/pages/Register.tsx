@@ -230,7 +230,7 @@ class SignUp extends React.Component<ComponentProps<any>, IState> {
                 this.setState({code: 0});
                 setTimeout(function () {
                     window.location.reload(true);
-                }, 4000);
+                }, 2000);
             } else {
                 this.setState({
                     code: res["code"] as number
