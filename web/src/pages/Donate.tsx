@@ -68,13 +68,11 @@ const useStyles = createStyles((theme: Theme) => ({
         flexGrow: 1,
         padding: theme.spacing(3),
         marginTop: theme.spacing(5)
+    },
+    successChip: {
+        backgroundColor: "#33aa3a"
     }
 }));
-
-interface DonationRank {
-    user: string;
-    sum: number;
-}
 
 interface IState {
     server: string;
@@ -256,7 +254,7 @@ class Donate extends React.Component<ComponentProps<any>, IState> {
                                                                 {t.type}
                                                             </TableCell>
                                                             <TableCell align="right">
-                                                                {t.status == 1 && <Chip color="primary" icon={<CheckCircleIcon />} label="Thẻ đúng" />}
+                                                                {t.status == 1 && <Chip color="secondary" className={classes.successChip} icon={<CheckCircleIcon />} label="Thẻ đúng" />}
                                                                 {t.status == 2 && <Chip color="primary" icon={<WarningIcon />} label="Sai mệnh giá" />}
                                                                 {t.status == 3 && <Chip color="secondary" icon={<CancelIcon />} label="Thẻ sai" />}
                                                                 {t.status == 99 && <Chip icon={<AutorenewIcon />} label="Đang xử lý" />}
